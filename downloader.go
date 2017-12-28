@@ -4,6 +4,7 @@ import (
   "io/ioutil"
   "net/http"
   "os"
+  "strings"
 )
 
 type Downloader interface {
@@ -11,15 +12,23 @@ type Downloader interface {
   Get(url string) (f *os.File, err error)
 }
 
+type configuration struct {}
+
 //
 //  fileDownloader
 //
-type fileDownloader struct {}
+type fileDownloader struct {
+  outputDir string
+  Filename string
+}
 
 // Download data from url into a file
 func (dwn *fileDownloader) Get(url string) (f *os.File, err error){
   var res *http.Response
   var body []byte
+
+  var urlParts []string = strings.Split(url, "/")
+  dwn.Filename = urlParts[len(urlParts)-1]
 
   res, err = http.Get(url)
   if err != nil {
@@ -32,7 +41,7 @@ func (dwn *fileDownloader) Get(url string) (f *os.File, err error){
     return f, err
   }
 
-  f, err = os.Create("test_file.txt")
+  f, err = os.Create(dwn.outputDir + "/" + dwn.Filename)
   if err != nil {
     return f, err
   }
@@ -45,6 +54,10 @@ func (dwn *fileDownloader) Get(url string) (f *os.File, err error){
 //
 //  Downloader
 //
-func NewDownloader() Downloader {
-  return new(fileDownloader)
+func NewDownloader(outputDir string) Downloader {
+  os.MkdirAll(outputDir, os.ModePerm)
+
+  return &fileDownloader{
+    outputDir: outputDir,
+  }
 }

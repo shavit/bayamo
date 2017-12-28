@@ -6,3 +6,8 @@ start_dev:
 		--env-file ${PWD}/.env \
 		-v ${PWD}:/go/src/github.com/shavit/bayamo \
 		-ti itstommy/bayamo
+
+protoc:
+	export GOPATH=~/Go
+	export PATH=$PATH:$GOPATH/bin
+	protoc -I . proto/bayamo.proto --go_out=plugins=grpc:.

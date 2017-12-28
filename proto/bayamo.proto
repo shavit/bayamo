@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package proto;
+
+message DownloadJob {
+  string url = 1;
+  string outputDir = 2;
+}
+
+message DownloadJobResult {
+  bool ok = 1;
+  string outputPath = 2;
+}
+
+service DownloaderService {
+  rpc Write(DownloadJob) returns(DownloadJobResult) {}
+}

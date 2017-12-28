@@ -7,6 +7,12 @@ start_dev:
 		-v ${PWD}:/go/src/github.com/shavit/bayamo \
 		-ti itstommy/bayamo
 
+start_server:
+	docker run --rm \
+		--name bayamo_server \
+		--env-file ${PWD}/.env \
+		-ti itstommy/bayamo go run cmd/main.go server
+
 protoc:
 	export GOPATH=~/Go
 	export PATH=$PATH:$GOPATH/bin

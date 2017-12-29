@@ -15,6 +15,18 @@ func TestCreateDownloader(t *testing.T){
   }
 }
 
+func TestFileDownloaderGenerateName(t *testing.T){
+  var dwn Downloader = NewDownloader("tmp_dir")
+  var filename string = "example.txt"
+  var path string = dwn.generateName(filename)
+
+  if path == "" {
+    t.Error(path)
+  }
+
+  os.RemoveAll("tmp_dir")
+}
+
 func TestFileDownloaderGet(t *testing.T){
   var dwn Downloader = NewDownloader("out")
   var err error

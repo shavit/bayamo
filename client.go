@@ -54,6 +54,7 @@ func (c *client) typeToSend() {
   var scanner *bufio.Scanner = bufio.NewScanner(os.Stdin)
   var job *_proto.DownloadJob
 
+  print("> ")
   for scanner.Scan(){
     job = &_proto.DownloadJob{
       Url: scanner.Text(),

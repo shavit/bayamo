@@ -25,10 +25,11 @@ func (c *client) Dial() (err error){
   var ch chan os.Signal = make(chan os.Signal)
   var conn *grpc.ClientConn
   var timeout time.Duration = time.Duration(10 * time.Millisecond)
+  var host string = os.Getenv("SERVER_HOSTNAME")
 
-  conn, err = grpc.Dial("bayamo_server:2400", grpc.WithTimeout(timeout), grpc.WithInsecure())
+  conn, err = grpc.Dial(host, grpc.WithTimeout(timeout), grpc.WithInsecure())
   if err != nil {
-    return errors.New("Error dialing to remote server")
+    return errors.New("Error dialing to remote server " + host)
   }
   defer conn.Close()
   go func() {

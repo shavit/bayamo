@@ -19,14 +19,12 @@ type Server interface{
   // Start starts the server
   Start() (err error)
 
-  // addClient adds a client into the clients map
-  addClient(c io.ReadWriteCloser)
-
   // Write start a download task and write the response into a file
   Write(ctx context.Context, job *_proto.DownloadJob) (res *_proto.DownloadJobResult, err error)
 }
 
 type clientConnection struct {
+  id int
   conn io.ReadWriteCloser
 }
 
@@ -77,15 +75,12 @@ func (s *server) Start() (err error){
       conn.Close()
       return errors.New("Error serving grpc")
     }
-    println("New connection")
-    s.addClient(conn)
+    println("new connection")
+    conn.Close()
   }
 
   return err
 }
-
-// addClient adds a client into the clients map
-func (s *server) addClient(c io.ReadWriteCloser) {}
 
 // Write start a download task and write the response into a file
 func (s *server) Write(ctx context.Context, job *_proto.DownloadJob) (res *_proto.DownloadJobResult, err error){

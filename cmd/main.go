@@ -7,7 +7,7 @@ import (
 )
 
 func printUsage(){
-  println("Options: server")
+  println("Options: server, repl")
 }
 
 func main(){
@@ -27,7 +27,7 @@ func main(){
     break
   case "repl":
     var err error
-    var client bayamo.Client = bayamo.NewClient()
+    client := bayamo.NewClient()
     err = client.Dial()
     if err != nil {
       panic(err)

@@ -61,20 +61,22 @@ func (s *server) Start() (err error){
   // s.grpcServer = grpc.NewServer(opts)
   s.grpcServer = grpc.NewServer()
 
-  ln, err = net.Listen("tcp", ":2400")
+  ln, err = net.Listen("tcp", "bayamo_server:2400")
   if err != nil {
-    return errors.New("Error listening to port 2400")
+    return errors.New("Error listening to 0.0.0.0:2400")
   }
 
   _proto.RegisterDownloaderServiceServer(s.grpcServer, s)
 
-  println("Serving")
+  println("Listening on 0.0.0.0:2400")
   go s.grpcServer.Serve(ln)
   for {
     conn, err = ln.Accept()
     if err != nil {
+      conn.Close()
       return errors.New("Error serving grpc")
     }
+    println("New connection")
     s.addClient(conn)
   }
 
@@ -86,5 +88,13 @@ func (s *server) addClient(c io.ReadWriteCloser) {}
 
 // Write start a download task and write the response into a file
 func (s *server) Write(ctx context.Context, job *_proto.DownloadJob) (res *_proto.DownloadJobResult, err error){
+  var outputPath string = job.OutputDir
+
+  println("Starting a download task:", job.Url)
+
+  res = &_proto.DownloadJobResult{Ok: true,
+    OutputPath: outputPath,
+  }
+
   return res, err
 }

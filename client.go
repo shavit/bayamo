@@ -65,6 +65,9 @@ func (c *client) typeToSend() {
     res, err = c.work(job)
     if err != nil {
       println("Error sending a message:", err.Error())
+    }
+
+    if res == nil {
       os.Exit(0)
     }
 
@@ -74,6 +77,7 @@ func (c *client) typeToSend() {
       println("Saved to", res.OutputPath)
     }
 
+    print("> ")
   }
 
 

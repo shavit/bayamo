@@ -4,6 +4,7 @@ import (
   "errors"
   "io"
   "net"
+  "os"
   "sync"
 
   "google.golang.org/grpc"
@@ -84,13 +85,30 @@ func (s *server) Start() (err error){
 
 // Write start a download task and write the response into a file
 func (s *server) Write(ctx context.Context, job *_proto.DownloadJob) (res *_proto.DownloadJobResult, err error){
-  var outputPath string = job.OutputDir
+  var outputPath string = job.OutputDir + "/downloads"
+  var f *os.File
+  var info os.FileInfo
+  var dwn Downloader = NewDownloader(outputPath)
 
-  println("Starting a download task:", job.Url)
-
-  res = &_proto.DownloadJobResult{Ok: true,
+  res = &_proto.DownloadJobResult{Ok: false,
     OutputPath: outputPath,
   }
+
+  println("Starting a download task:", job.Url)
+  f, err = dwn.Get(job.Url)
+  if err != nil {
+    println("Error downloading from", job.Url, ".", err.Error())
+    return res, err
+  } else {
+    res.Ok = true
+  }
+
+  info, err = f.Stat()
+  if err != nil {
+    return res, err
+  }
+  println("Filename:", info.Name(), "| File size:", info.Size())
+  f.Close()
 
   return res, err
 }

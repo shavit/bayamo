@@ -3,7 +3,7 @@ ifneq ($(shell docker network ls | grep bayamo_network | wc -l | xargs), 0)
 	docker network rm bayamo_network
 endif
 
-build: create_server
+build:
 	docker build -t itstommy/bayamo .
 
 create_network:
@@ -11,7 +11,7 @@ ifeq ($(shell docker network ls | grep bayamo_network | wc -l | xargs), 0)
 	docker network create bayamo_network
 endif
 
-create_server:
+create_server: build
 	docker run --rm \
 		--name bayamo_server_tmp \
 		--env-file ${PWD}/.env \

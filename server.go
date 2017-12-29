@@ -57,18 +57,19 @@ func (s *server) AddCredentials(crtFile, keyFile string) (err error){
 func (s *server) Start() (err error){
   var ln net.Listener
   var conn net.Conn
+  var host string = "0.0.0.0:2400"
   // var opts grpc.ServerOption = grpc.Creds(s.Creds)
   // s.grpcServer = grpc.NewServer(opts)
   s.grpcServer = grpc.NewServer()
 
-  ln, err = net.Listen("tcp", "bayamo_server:2400")
+  ln, err = net.Listen("tcp", host)
   if err != nil {
-    return errors.New("Error listening to 0.0.0.0:2400")
+    return errors.New("Error listening to " + host)
   }
 
   _proto.RegisterDownloaderServiceServer(s.grpcServer, s)
 
-  println("Listening on 0.0.0.0:2400")
+  println("Listening on", host)
   go s.grpcServer.Serve(ln)
   for {
     conn, err = ln.Accept()

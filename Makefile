@@ -33,6 +33,7 @@ start_server: create_network
 		--net bayamo_network \
 		--name bayamo_server \
 		--env-file ${PWD}/.env \
+		-v ${PWD}:/go/src/github.com/shavit/bayamo \
 		-ti itstommy/bayamo go run cmd/main.go server
 
 protoc:

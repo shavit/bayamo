@@ -7,6 +7,7 @@ import (
   "net/http"
   "os"
   "math/rand"
+  "net/url"
   "strings"
   "time"
 )
@@ -50,16 +51,25 @@ func (dwn *fileDownloader) generateName(name string) (path string){
 }
 
 // Download data from url into a file
-func (dwn *fileDownloader) Get(url string) (f *os.File, err error){
+func (dwn *fileDownloader) Get(rawUrl string) (f *os.File, err error){
   var res *http.Response
   var body []byte
   var filePath string
+  var _url *url.URL
+  var urlParts []string
 
-  var urlParts []string = strings.Split(url, "/")
+  _url, err = url.Parse(rawUrl)
+  if err != nil {
+    return f, err
+  }
+
+  // Sanitize the file name and path
+  urlParts = strings.Split(_url.EscapedPath(), "/")
   dwn.Filename = urlParts[len(urlParts)-1]
-  filePath = dwn.outputDir + "/" + dwn.Filename
+  filePath = dwn.generateName(dwn.Filename)
 
-  res, err = http.Get(url)
+  // Start the download
+  res, err = http.Get(rawUrl)
   if err != nil {
     return f, err
   }
@@ -77,7 +87,14 @@ func (dwn *fileDownloader) Get(url string) (f *os.File, err error){
     return f, err
   }
 
+  // Write the data to disk
   _, err = f.Write(body)
+  if err == nil {
+    println("Success writing a file")
+    // Report
+  } else {
+    panic(err)
+  }
 
   return f, err
 }

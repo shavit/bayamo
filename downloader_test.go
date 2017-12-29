@@ -35,7 +35,7 @@ func TestFileDownloaderGet(t *testing.T){
   }))
   defer serv.Close()
 
-  _, err = dwn.Get(serv.URL + "/Dockerfile")
+  _, err = dwn.Get(serv.URL + "/Dockerfile?query=string")
   if err != nil {
     t.Error("Error downloading a file: " + err.Error())
   }

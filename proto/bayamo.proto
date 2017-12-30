@@ -10,6 +10,7 @@ message DownloadJob {
 message DownloadJobResult {
   bool ok = 1;
   string outputPath = 2;
+  int64 size = 3;
 }
 
 service DownloaderService {

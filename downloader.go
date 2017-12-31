@@ -93,10 +93,7 @@ func (dwn *fileDownloader) Get(rawUrl string) (f *os.File, err error){
 
   // Write the data to disk
   _, err = f.Write(body)
-  if err == nil {
-    println("Success writing a file")
-    // Report
-  } else {
+  if err != nil {
     panic(err)
   }
 

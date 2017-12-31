@@ -43,6 +43,23 @@ func TestFileDownloaderGet(t *testing.T){
   os.RemoveAll("out")
 }
 
+func TestFileDownloaderGet404(t *testing.T){
+  var dwn Downloader = NewDownloader("out")
+  var err error
+  var serv *httptest.Server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request){
+    w.WriteHeader(http.StatusNotFound)
+    http.StatusText(http.StatusNotFound)
+  }))
+  defer serv.Close()
+
+  _, err = dwn.Get(serv.URL + "/not-found")
+  if err == nil {
+    t.Error("Should not proceed if not found")
+  }
+
+  os.RemoveAll("out")
+}
+
 func TestFileDownloaderExtractFilenameFromURL(t *testing.T){
   var dwn Downloader = NewDownloader("out")
   var serv *httptest.Server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request){

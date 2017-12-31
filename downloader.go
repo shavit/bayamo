@@ -2,6 +2,7 @@ package bayamo
 
 import (
   "encoding/hex"
+  "errors"
   "fmt"
   "io/ioutil"
   "net/http"
@@ -72,6 +73,9 @@ func (dwn *fileDownloader) Get(rawUrl string) (f *os.File, err error){
   res, err = http.Get(rawUrl)
   if err != nil {
     return f, err
+  }
+  if res.StatusCode != 200 {
+    return f, errors.New(fmt.Sprintf("Resource unavailable. Expected 200, got %s", res.Status))
   }
   defer res.Body.Close()
 
